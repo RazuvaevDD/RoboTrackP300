@@ -1,0 +1,7 @@
+.git/
+VS/.vs/
+VS/Debug/
+VS/Release/
+VS/VS/Debug/
+VS/VS/Release/
+VS/VS/VS.vcxproj.user
