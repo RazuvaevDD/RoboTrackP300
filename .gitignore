@@ -2,6 +2,8 @@
 VS/.vs/
 VS/x64/
 VS/x32/
+VS/VS/x64/
+VS/VS/x32/
 VS/Debug/
 VS/Release/
 VS/VS/Debug/
