@@ -1,5 +1,7 @@
 .git/
 VS/.vs/
+VS/x64/
+VS/x32/
 VS/Debug/
 VS/Release/
 VS/VS/Debug/
