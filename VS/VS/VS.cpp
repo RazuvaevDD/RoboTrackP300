@@ -5,6 +5,8 @@
 #include "stdafx.h"
 #include "VS.h"
 #include "GUI/GUI.h"
+#include "Core.h"
+#include <thread>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,15 +19,20 @@ BEGIN_MESSAGE_MAP(main, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
+std::thread* core;
+
+void LoadCore()
+{
+	Core::main(core);
+}
 
 // Создание main
-
 main::main()
 {
+	core = new std::thread(LoadCore);
 	// TODO: добавьте код создания,
 	// Размещает весь важный код инициализации в InitInstance
 }
-
 
 // Единственный объект main
 
@@ -88,6 +95,9 @@ BOOL main::InitInstance()
 
 	// Поскольку диалоговое окно закрыто, возвратите значение FALSE, чтобы можно было выйти из
 	//  приложения вместо запуска генератора сообщений приложения.
+	Core::stopCore();
+	core->join();
+	delete core;
 	return FALSE;
 }
 

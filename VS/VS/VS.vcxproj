@@ -32,6 +32,7 @@
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -179,6 +180,10 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\LSLlibs&amp;headers\lsl_c.h" />
+    <ClInclude Include="..\LSLlibs&amp;headers\lsl_constants.h" />
+    <ClInclude Include="..\LSLlibs&amp;headers\lsl_cpp.h" />
+    <ClInclude Include="Core.h" />
     <ClInclude Include="GUI/GUI.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -186,6 +191,7 @@
     <ClInclude Include="VS.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core.cpp" />
     <ClCompile Include="GUI/GUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -203,6 +209,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\VS.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\LSLlibs&amp;headers\liblsl32.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
