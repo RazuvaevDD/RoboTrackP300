@@ -14,6 +14,7 @@ struct GameScene
     TmxObject player;
     std::vector<TmxObject> enemies;
     std::vector<TmxObject> coins;
+	std::vector<TmxObject> blocks;
 };
 
 GameScene* NewGameScene(const char* file);

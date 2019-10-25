@@ -7,9 +7,7 @@ GameView *NewGameView(const sf::Vector2i &windowSize)
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
-    pView->window.create(sf::VideoMode(windowSize.x, windowSize.y),
-                         "Tiled Map Parser Demo",
-                         sf::Style::Close, settings);
+    pView->window.create(sf::VideoMode(windowSize.x, windowSize.y), "Game", sf::Style::Close, settings);
     pView->window.setFramerateLimit(60);
 
     pView->camera.reset(sf::FloatRect(0.0f, 0.0f, windowSize.x, windowSize.y));

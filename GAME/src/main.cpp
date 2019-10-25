@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     {
         // NOTE: Если при загрузке карты будет выброшено исключение,
         //  то память утечёт. НАДО ЮЗАТЬ БУСТ УКАЗАТЕЛИ!!!
-        GameView *pGameView = NewGameView({800, 600});
+        GameView *pGameView = NewGameView({1200, 900});
         GameScene *pGameScene = NewGameScene("res/platformer.tmx");
 
         // Аргумент типа `GameLogic*` будет преобразован в `void*`.

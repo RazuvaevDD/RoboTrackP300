@@ -9,7 +9,7 @@ using sf::Vector2f;
 using sf::Vector2i;
 
 // Абсолютная скорость движения игрока.
-static const float PLAYER_SPEED = 200;
+static const float PLAYER_SPEED = 110;
 
 // Выполняет нормализацию вектора (приведение к единичной длине).
 static Vector2f Normalize(const Vector2f &value)
@@ -63,6 +63,7 @@ GameScene* NewGameScene(const char* file)
     pLogic->player = level.GetFirstObject("player");
     pLogic->coins = level.GetAllObjects("coin");
     pLogic->enemies = level.GetAllObjects("enemy");
+	pLogic->blocks = level.GetAllObjects("");
 
     return pLogic;
 }
@@ -78,6 +79,24 @@ void UpdateGameScene(void *pData, GameView &view, float deltaSec)
     const Vector2f movement = Round(GetPlayerDirection() * PLAYER_SPEED * deltaSec);
     player.MoveBy(movement);
 
+
+	for (int i = 0; i < pLogic->coins.size(); i++) {
+
+		if (pLogic->coins[i].rect.intersects(player.rect)) {
+			pLogic->coins[i].show = false;
+		}
+		else {
+		}
+	}
+
+	for (int i = 0; i < pLogic->blocks.size(); i++)
+	{
+		if (pLogic->blocks[i].rect.intersects(player.rect)) {
+			player.MoveBy(Vector2f(-movement.x, -movement.y));
+		}
+	}
+
+
     const Vector2i windowSize = view.windowSize;
     SetCameraCenter(view, player.sprite.getPosition() + Vector2f(windowSize.x / 4, windowSize.y / 4));
 }
@@ -91,12 +110,20 @@ void DrawGameScene(void *pData, GameView &view)
     pLogic->level.Draw(target);
     for (const TmxObject &coin : pLogic->coins)
     {
-        target.draw(coin.sprite);
+		if(coin.show)
+			target.draw(coin.sprite);
     }
     for (const TmxObject &enemy : pLogic->enemies)
     {
-        target.draw(enemy.sprite);
+		if(enemy.show)
+			target.draw(enemy.sprite);
     }
+	for (const TmxObject &block : pLogic->blocks)
+	{
+		if(block.show)
+			target.draw(block.sprite);
+	}
+
     target.draw(pLogic->player.sprite);
 }
 
