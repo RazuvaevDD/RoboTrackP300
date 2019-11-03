@@ -3,26 +3,28 @@
 #include <thread>
 #include <boost/signals2.hpp>
 #include <iostream>
+#include "LSLConnector/LSLConnector.h"
+#include "DataHandler/DataHandler.h"
+#include "boost/bind.hpp"
 
 std::thread* CoreThread;
 bool run = true;
 
-
-class Example
-{
-public:
-	boost::signals2::signal<void()> onShit;
-};
-
 void Core::main(std::thread* coreThread)
 {
-	while (run)//т.к. второй поток, шраф интерфейс не виснит
-	printf( "Ядро запущено! Этот поток отвечает за бэкенд." );	// проблема в выводе в консоль, аналог не нашел. Прога сюда доходит.
+	LSLConnector LSLInput;
+	DataHandler dataHandler;
+	//тут связываем LSLInput с dataHandler (сигнал sendData в слот dataProcessing)
+	LSLInput.sendData.connect(boost::bind(&DataHandler::dataProcessing, &dataHandler));
+	while (run)
+	{
+		LSLInput.getData();
+	}
 }
 
 void Core::stopCore()
 {
 	run = false;
-	std::cout << "Тут действия для завершения работы бэкенда";	// странно что в этом потоке не работет вывод в консоль, 
-																//что делать - потом подумаю
+	//Тут действия для завершения работы бэкенда
+	//в данном случае - завершение работы цикла
 }
