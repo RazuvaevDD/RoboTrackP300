@@ -11,7 +11,6 @@ DataHandler::DataHandler()
 	}
 }
 
-
 DataHandler::~DataHandler()
 {
 	out.close();
