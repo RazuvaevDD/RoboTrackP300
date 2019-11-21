@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "Core.h"
 #include <thread>
-//#include <boost/signals2.hpp>
 #include <iostream>
 #include "LSLConnector/LSLConnector.h"
 #include "DataHandler/DataHandler.h"
-//#include "boost/bind.hpp"
 
 std::thread* CoreThread;
 bool run = true;
@@ -16,10 +14,26 @@ void Core::main(std::thread* coreThread)
 	DataHandler dataHandler;
 	//тут связываем LSLInput с dataHandler (сигнал sendData в слот dataProcessing)
 	//LSLInput.sendData.connect(boost::bind(&DataHandler::dataProcessing, &dataHandler));
+	int kk = 0;
 	while (run)
 	{
-		dataHandler.dataProcessing(LSLInput.getData());
-		//посылается сигнал, что нужно получить данные,
+		std::vector<std::vector<float>> vectorProb = dataHandler.dataProcessing(LSLInput.getData());
+		
+		if (!vectorProb.empty()) {//если проба готова
+			dataHandler.out << "Итоговые вектора:" << std::endl;
+			for (std::vector<float> proba : vectorProb) {
+				for (float data : proba) {
+					dataHandler.out << data << ' ';
+				}
+				dataHandler.out << std::endl;
+			}
+			
+			kk = 0;
+		}
+
+		if (kk == 50)
+			dataHandler.startCreateVectorProba();
+		kk++;
 	}
 }
 
