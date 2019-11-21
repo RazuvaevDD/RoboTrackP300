@@ -12,8 +12,8 @@ public:
 	std::vector<std::vector<float>> dataProcessing(std::vector<float>);
 	void startCreateVectorProba();
 
-	int SIZE_PRESHOW = 25;
-	int SIZE_PROBA   = 80;
+	int SIZE_PRESHOW = 250;
+	int SIZE_PROBA   = 800;
 
 	std::ofstream out;
 private:

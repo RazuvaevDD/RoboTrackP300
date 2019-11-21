@@ -4,6 +4,7 @@
 #include <iostream>
 #include "LSLConnector/LSLConnector.h"
 #include "DataHandler/DataHandler.h"
+#include "tcpSender.h"
 
 std::thread* CoreThread;
 bool run = true;
@@ -12,6 +13,8 @@ void Core::main(std::thread* coreThread)
 {
 	LSLConnector LSLInput;
 	DataHandler dataHandler;
+	tcpSender tcpSender;
+
 	//тут связываем LSLInput с dataHandler (сигнал sendData в слот dataProcessing)
 	//LSLInput.sendData.connect(boost::bind(&DataHandler::dataProcessing, &dataHandler));
 	int kk = 0;
@@ -20,6 +23,7 @@ void Core::main(std::thread* coreThread)
 		std::vector<std::vector<float>> vectorProb = dataHandler.dataProcessing(LSLInput.getData());
 		
 		if (!vectorProb.empty()) {//если проба готова
+			tcpSender.sendDataByTCP(vectorProb);
 			dataHandler.out << "Итоговые вектора:" << std::endl;
 			for (std::vector<float> proba : vectorProb) {
 				for (float data : proba) {
@@ -31,7 +35,7 @@ void Core::main(std::thread* coreThread)
 			kk = 0;
 		}
 
-		if (kk == 50)
+		if (kk == 500)
 			dataHandler.startCreateVectorProba();
 		kk++;
 	}
