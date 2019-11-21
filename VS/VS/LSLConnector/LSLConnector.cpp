@@ -2,18 +2,17 @@
 #include "LSLConnector.h"
 
 
-LSLConnector::LSLConnector()
+LSLConnector::LSLConnector():
+	inlet(results[0])
 {
+	out << results[0].as_xml() << std::endl;
 }
 
-void LSLConnector::getData()
+std::vector<float> LSLConnector::getData()
 {
-	double* arr = new double[5];
-	for (int i = 0; i < 5; i++)
-		arr[i] = i;
-
 	//тут кидаешь сигнал с данными. —в€зывание в Core. ¬ыбери любую структуру какую будешь кидать, не об€зательно double*
-	sendData();
+	inlet.pull_sample(sample);
+	return sample;
 }
 
 LSLConnector::~LSLConnector()
