@@ -6,8 +6,9 @@
 #include "DataHandler/DataHandler.h"
 #include "tcpSender.h"
 
-std::thread* CoreThread;
-bool run = true;
+using namespace Core;
+
+bool runCore = true;
 
 void Core::main(std::thread* coreThread)
 {
@@ -18,7 +19,7 @@ void Core::main(std::thread* coreThread)
 	//тут связываем LSLInput с dataHandler (сигнал sendData в слот dataProcessing)
 	//LSLInput.sendData.connect(boost::bind(&DataHandler::dataProcessing, &dataHandler));
 	int kk = 0;
-	while (run)
+	while (runCore)
 	{
 		std::vector<std::vector<float>> vectorProb = dataHandler.dataProcessing(LSLInput.getData());
 		
@@ -36,14 +37,16 @@ void Core::main(std::thread* coreThread)
 		}
 
 		if (kk == 500)
-			dataHandler.startCreateVectorProba();
+			dataHandler.setStatusPicture(1);//типа начинаем показывать картинку №1
+		if (kk == 700)
+			dataHandler.setStatusPicture(0);//типа заканчиваем показывать картинку
 		kk++;
 	}
 }
 
 void Core::stopCore()
 {
-	run = false;
+	runCore = false;
 	//Тут действия для завершения работы бэкенда
 	//в данном случае - завершение работы цикла
 }

@@ -16,10 +16,13 @@ public:
 	int SIZE_PROBA   = 800;
 
 	std::ofstream out;
+	void setStatusPicture(int status);
 private:
 	
 	std::chrono::steady_clock::time_point t1; //время начала работы модуля
 	std::vector< std::vector<float>> vectorProb;
+
+	int STATUS = 0;
 
 	bool CREATING_PROBA = false;
 };

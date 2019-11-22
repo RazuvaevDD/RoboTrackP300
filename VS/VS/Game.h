@@ -2,11 +2,10 @@
 
 #include <thread>
 
-namespace Core
+namespace Game
 {
 	void main(std::thread*);
-	void stopCore();
+	void stopGame();
 
-	//std::thread* CoreThread;
-	
+	//std::thread* GameThread;
 };

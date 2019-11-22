@@ -2,6 +2,8 @@
 #include "tcpSender.h"
 #include <sstream>
 
+#include "DataHandler/DataHandler.h"
+
 tcpSender::tcpSender()
 {
 	// Initialize Winsock

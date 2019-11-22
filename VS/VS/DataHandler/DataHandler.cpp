@@ -44,7 +44,7 @@ std::vector<std::vector<float>> DataHandler::dataProcessing(std::vector<float> s
 	
 	if (vectorProb.empty()) {
 		out << "Создаем потоки проб № ";
-		for (int i = 0; i < sample.size()+1; i++) {
+		for (int i = 0; i < sample.size()+2; i++) {
 			std::vector<float> proba;
 			vectorProb.push_back(proba);
 			out << i << ' ';
@@ -55,9 +55,10 @@ std::vector<std::vector<float>> DataHandler::dataProcessing(std::vector<float> s
 
 	
 	vectorProb[0].push_back(timeNOW);
+	vectorProb[1].push_back(STATUS);
 	for (int i = 0; i < sample.size(); i++) 
 	{
-		vectorProb[i + 1].push_back(sample[i]);
+		vectorProb[i + 2].push_back(sample[i]);
 	}
 
 	float oldPackageTime = vectorProb[0][0];
@@ -89,6 +90,7 @@ std::vector<std::vector<float>> DataHandler::dataProcessing(std::vector<float> s
 				vectorProb[j].erase(vectorProb[j].end()-1);
 			}
 			CREATING_PROBA = false;//отмечаем что мы теперь перестали наращивать пробу
+			STATUS = 0; // обнуляем статус
 			return vectorProb;
 		}
 	}
@@ -105,4 +107,12 @@ std::vector<std::vector<float>> DataHandler::dataProcessing(std::vector<float> s
 void DataHandler::startCreateVectorProba()
 {
 	CREATING_PROBA = true;
+}
+
+void DataHandler::setStatusPicture(int status)
+{
+	if ((STATUS == 0) && (status != 0)) { // если мы начали показывать любую картинку
+		startCreateVectorProba();         // начинаем записывать пробу
+		STATUS = status;
+	}
 }

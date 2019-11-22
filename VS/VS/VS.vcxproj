@@ -37,7 +37,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
@@ -189,6 +189,8 @@
     <ClInclude Include="..\LSLlibs&amp;headers\lsl_cpp.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="DataHandler\DataHandler.h" />
+    <ClInclude Include="Filter\Filter.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GUI/GUI.h" />
     <ClInclude Include="LSLConnector\LSLConnector.h" />
     <ClInclude Include="Resource.h" />
@@ -200,6 +202,8 @@
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="DataHandler\DataHandler.cpp" />
+    <ClCompile Include="Filter\Filter.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GUI/GUI.cpp" />
     <ClCompile Include="LSLConnector\LSLConnector.cpp" />
     <ClCompile Include="stdafx.cpp">
