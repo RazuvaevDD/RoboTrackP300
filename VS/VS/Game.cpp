@@ -4,6 +4,7 @@
 #include <thread>
 #include <iostream>
 #include <string>
+#include "Core.h"
 
 using namespace Game;
 
@@ -11,6 +12,7 @@ bool runGame = true;
 
 void Game::main(std::thread* gameThread)
 {
+	sf::sleep(sf::milliseconds(2000));
 	sf::RenderWindow window(sf::VideoMode(1440, 480), "Running Duck");
 	sf::CircleShape shape(100.f);
 	sf::Clock gameClock;
@@ -93,6 +95,7 @@ void Game::main(std::thread* gameThread)
 		{
 			arrow.setString("");
 			stats = 0;
+			Core::askStatus(stats);
 		} 
 		else if (timeTarget >= 250 && timeTarget < 400)
 		{
@@ -100,18 +103,21 @@ void Game::main(std::thread* gameThread)
 			{
 				arrow.setString(">>");
 				arrow.setFillColor(sf::Color::Green);
+				stats = 1;
 			}
 			else if (greenRedTargetStat == false)
 			{
 				arrow.setString(" X");
 				arrow.setFillColor(sf::Color::Red);
+				stats = 2;
 			}
-			
+			Core::askStatus(stats);
 		}
 		else if (timeTarget >= 400 && timeTarget < 1400)
 		{
 			arrow.setString("");
 			stats = 0;
+			Core::askStatus(stats);
 		}
 		else
 		{
