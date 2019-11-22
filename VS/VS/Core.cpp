@@ -10,12 +10,12 @@ using namespace Core;
 
 bool runCore = true;
 
+LSLConnector LSLInput;
+DataHandler dataHandler;
+tcpSender tcpSender;
+
 void Core::main(std::thread* coreThread)
 {
-	LSLConnector LSLInput;
-	DataHandler dataHandler;
-	tcpSender tcpSender;
-
 	//тут связываем LSLInput с dataHandler (сигнал sendData в слот dataProcessing)
 	//LSLInput.sendData.connect(boost::bind(&DataHandler::dataProcessing, &dataHandler));
 	int kk = 0;
@@ -49,4 +49,8 @@ void Core::stopCore()
 	runCore = false;
 	//Тут действия для завершения работы бэкенда
 	//в данном случае - завершение работы цикла
+}
+
+void Core::askStatus(int stat) {
+	dataHandler.setStatusPicture(stat);
 }
