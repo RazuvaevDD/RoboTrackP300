@@ -50,3 +50,7 @@ void Core::stopCore()
 	//Тут действия для завершения работы бэкенда
 	//в данном случае - завершение работы цикла
 }
+
+void Core::askStatus(int stat) {
+	std::cout << "" << std::endl;
+}
