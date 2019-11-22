@@ -37,7 +37,9 @@ void Core::main(std::thread* coreThread)
 		}
 
 		if (kk == 500)
-			dataHandler.startCreateVectorProba();
+			dataHandler.setStatusPicture(1);//типа начинаем показывать картинку №1
+		if (kk == 700)
+			dataHandler.setStatusPicture(0);//типа заканчиваем показывать картинку
 		kk++;
 	}
 }
