@@ -189,6 +189,7 @@
     <ClInclude Include="..\LSLlibs&amp;headers\lsl_cpp.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="DataHandler\DataHandler.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="GUI/GUI.h" />
     <ClInclude Include="LSLConnector\LSLConnector.h" />
     <ClInclude Include="Resource.h" />
@@ -200,6 +201,7 @@
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="DataHandler\DataHandler.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="GUI/GUI.cpp" />
     <ClCompile Include="LSLConnector\LSLConnector.cpp" />
     <ClCompile Include="stdafx.cpp">

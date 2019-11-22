@@ -6,6 +6,7 @@
 #include "VS.h"
 #include "GUI/GUI.h"
 #include "Core.h"
+#include "Game.h"
 #include <thread>
 
 #ifdef _DEBUG
@@ -20,16 +21,23 @@ BEGIN_MESSAGE_MAP(main, CWinApp)
 END_MESSAGE_MAP()
 
 std::thread* core;
+std::thread* game;
 
 void LoadCore()
 {
 	Core::main(core);
 }
 
+void LoadGame()
+{
+	Game::main(game);
+}
+
 // Создание main
 main::main()
 {
 	core = new std::thread(LoadCore);
+	game = new std::thread(LoadGame);
 	// TODO: добавьте код создания,
 	// Размещает весь важный код инициализации в InitInstance
 }
@@ -96,8 +104,11 @@ BOOL main::InitInstance()
 	// Поскольку диалоговое окно закрыто, возвратите значение FALSE, чтобы можно было выйти из
 	//  приложения вместо запуска генератора сообщений приложения.
 	Core::stopCore();
+	Game::stopGame();
 	core->join();
+	game->join();
 	delete core;
+	delete game;
 	return FALSE;
 }
 
