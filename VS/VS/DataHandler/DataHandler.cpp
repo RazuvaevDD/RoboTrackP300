@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "DataHandler.h"
 
-
-
 DataHandler::DataHandler()
 {
 	out.open("log.log");        // окрываем файл дл€ записи
@@ -10,7 +8,6 @@ DataHandler::DataHandler()
 	{
 		out << "Log started!" << std::endl;
 	}
-	t1 = std::chrono::high_resolution_clock::now();
 }
 
 DataHandler::~DataHandler()
@@ -20,86 +17,56 @@ DataHandler::~DataHandler()
 
 std::vector<std::vector<float>> DataHandler::dataProcessing(std::vector<float> sample)
 {
-	//----------------------------------------------------------
-	// поток дл€ записи
-
-	
-	std::chrono::steady_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-
-	// floating-point duration: no duration_cast needed
-	std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-
-	float timeNOW = fp_ms.count();
-
-
-
-
-
-
-	//out << timeNOW << ' ';
-	//for (std::size_t i = 0; i < sample.size(); ++i) {
-	//	out << sample[i] << ' ';
-	//}
-	//out << std::endl;
-	
 	if (vectorProb.empty()) {
 		out << "—оздаем потоки проб є ";
-		for (int i = 0; i < sample.size()+2; i++) {
+		for (int i = 0; i < sample.size()+1; i++) {
 			std::vector<float> proba;
 			vectorProb.push_back(proba);
 			out << i << ' ';
 		}
 		out << std::endl << "¬ектора созданы." << std::endl;
 	}
-	
+	//if (ccccc == 0) {
+	//	int qq = -GetTickCount();
+	//}
+	//if (ccccc == 200) {
+	//	qq += GetTickCount();
+	//	ccccc = 0;
+	//	//out << "200 пакетов получены за (врем€):" << qq << "\n"; 
+	//}
 
-	
-	vectorProb[0].push_back(timeNOW);
-	vectorProb[1].push_back(STATUS);
+	vectorProb[0].push_back(STATUS);
 	for (int i = 0; i < sample.size(); i++) 
 	{
-		vectorProb[i + 2].push_back(sample[i]);
+		vectorProb[i + 1].push_back(sample[i]);
 	}
+	//for (std::vector<float> proba : vectorProb) {
+	//	out << "ѕроба\n";
+	//	for (float data : proba) {
+	//		out << data << ' ';
+	//	}
+	//}
 
-	float oldPackageTime = vectorProb[0][0];
-
-
-	if ((timeNOW - SIZE_PRESHOW > oldPackageTime) && (!CREATING_PROBA)) // если мы не накапливаем пробу и накопились старые пакеты удал€ем старые пакеты
+	if ((vectorProb[0].size() > SIZE_PRESHOW*Hz) && (!CREATING_PROBA)) // если мы не накапливаем пробу и накопились старые пакеты удал€ем старые пакеты
 	{
-		int i = 0;
-		while (i<vectorProb[0].size()) {
-			if (timeNOW - SIZE_PRESHOW > vectorProb[0][i]) {
-				i++;
-			}
-			else {
-
-				break;
-			}
-		}
-
 		// ”дал€ем старые пакеты до iтого элемента включительно
 		for (int j = 0; j < vectorProb.size(); j++) {
-			vectorProb[j].erase(vectorProb[j].begin(), vectorProb[j].begin() + i);
+			//out << "”дал€ем от 0 до "<< (int)(vectorProb[j].size() - SIZE_PRESHOW * Hz + 1) <<" элемента включительно\n";
+			vectorProb[j].erase(vectorProb[j].begin(), vectorProb[j].begin() + (int) (vectorProb[j].size() - SIZE_PRESHOW * Hz + 1));
 		}
 	}
 
+	//ccccc++;
+	
 	if (CREATING_PROBA) { // если мы создаем пробу
-		if (timeNOW - oldPackageTime >= SIZE_PROBA) {// и она создалась
-			//удал€ем последний элемент
-			for (int j = 0; j < vectorProb.size(); j++) {
-				vectorProb[j].erase(vectorProb[j].end()-1);
-			}
+		if (vectorProb[0].size() >= SIZE_PROBA*Hz) {// и она создалась
 			CREATING_PROBA = false;//отмечаем что мы теперь перестали наращивать пробу
 			STATUS = 0; // обнул€ем статус
+			out << "ќкончили записывать пробу.\n";// ¬ пробе "<<vectorProb[0].size()<<" элементов.\n";
 			return vectorProb;
 		}
 	}
 
-
-
-	//out << std::endl;
-	//out << std::endl;
-	
 	std::vector<std::vector<float>> emptyVectProb;
 	return emptyVectProb;
 }
@@ -112,7 +79,8 @@ void DataHandler::startCreateVectorProba()
 void DataHandler::setStatusPicture(int status)
 {
 	if ((STATUS == 0) && (status != 0)) { // если мы начали показывать любую картинку
-		startCreateVectorProba();         // начинаем записывать пробу
 		STATUS = status;
+		startCreateVectorProba();         // начинаем записывать пробу
+		out << "Ќачали накапливать пробу..." << std::endl;
 	}
 }
