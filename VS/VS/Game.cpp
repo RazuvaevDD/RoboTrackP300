@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "Game.h"
 
+#include <random>
+#include <ctime>
 #include <thread>
 #include <iostream>
 #include <string>
@@ -12,6 +14,9 @@ bool runGame = true;
 
 void Game::main(std::thread* gameThread)
 {
+	std::mt19937 randomValueGenerator(time(0));
+	std::uniform_int_distribution<int> dist(1, 5);
+
 	sf::sleep(sf::milliseconds(2000));
 	sf::RenderWindow window(sf::VideoMode(1440, 480), "Running Duck");
 	sf::CircleShape shape(100.f);
@@ -23,7 +28,11 @@ void Game::main(std::thread* gameThread)
 	sf::Text text(" ", font, 20);
 	text.setFillColor(sf::Color::Black);
 
-	sf::Text arrow("", font, 100);
+	sf::Text incentiveTarget("", font, 100);
+	sf::Text nonIncentiveTarget("", font, 100);
+	incentiveTarget.setString(">>");
+	nonIncentiveTarget.setString("X");
+
 	//arrow.setFillColor(sf::Color::Green);
 
 	sf::Text timer("", font, 100);
@@ -80,7 +89,8 @@ void Game::main(std::thread* gameThread)
 
 	int targetTimer = 0;
 	unsigned short int stats;
-	bool greenRedTargetStat = true;
+	//bool greenRedTargetStatFlag = true;
+	int randomValue = 0;
 
 	//инициализация игры
 	while (runGame)
@@ -91,36 +101,43 @@ void Game::main(std::thread* gameThread)
 		int timeTarget = targetClock.getElapsedTime().asMilliseconds();
 		gameClock.restart(); //перезагружает время
 		
+		//randomValue = dist(randomValueGenerator);
+
 		if (timeTarget >= 0 && timeTarget< 250)
 		{
-			arrow.setString("");
+			//arrow.setString("");
+			incentiveTarget.setFillColor(sf::Color::Black);
+			nonIncentiveTarget.setFillColor(sf::Color::Black);
 			stats = 0;
 			Core::askStatus(stats);
 		} 
 		else if (timeTarget >= 250 && timeTarget < 400)
 		{
-			if (greenRedTargetStat == true)
+			if (randomValue == 1)
 			{
-				arrow.setString(">>");
-				arrow.setFillColor(sf::Color::Green);
+				// целевой
+				incentiveTarget.setFillColor(sf::Color::Green);
+				nonIncentiveTarget.setFillColor(sf::Color::Black);
 				stats = 1;
 			}
-			else if (greenRedTargetStat == false)
+			else if (randomValue == 2 || randomValue == 3 || randomValue == 4 || randomValue == 5)//if (greenRedTargetStat == false)
 			{
-				arrow.setString(" X");
-				arrow.setFillColor(sf::Color::Red);
+				// не целевой
+				nonIncentiveTarget.setFillColor(sf::Color::Red);
+				incentiveTarget.setFillColor(sf::Color::Black);
 				stats = 2;
 			}
 			Core::askStatus(stats);
 		}
 		else if (timeTarget >= 400 && timeTarget < 1400)
 		{
-			arrow.setString("");
+			incentiveTarget.setFillColor(sf::Color::Black);
+			nonIncentiveTarget.setFillColor(sf::Color::Black);
 			stats = 0;
 			Core::askStatus(stats);
 		}
 		else
-		{
+		{/*
 			if (greenRedTargetStat == true)
 			{
 				greenRedTargetStat = false;
@@ -128,7 +145,10 @@ void Game::main(std::thread* gameThread)
 			else if (greenRedTargetStat == false)
 			{
 				greenRedTargetStat = true;
-			}
+			}*/
+			randomValue = dist(randomValueGenerator);
+			incentiveTarget.setFillColor(sf::Color::Black);
+			nonIncentiveTarget.setFillColor(sf::Color::Black);
 			targetClock.restart();
 		}
 
@@ -142,7 +162,7 @@ void Game::main(std::thread* gameThread)
 				window.close();
 		}
 
-		// вызов функции моргания по кнопку (должен быть рандом)
+		// вызов функции моргания по кнопке (должен быть рандом)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) closedEyes = true;
 		// вызов функции пристального взгляда (должен быть рандом)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) looksAway = true;
@@ -218,8 +238,11 @@ void Game::main(std::thread* gameThread)
 		text.setString("SCORE: " + strScore);//задает строку тексту
 		text.setPosition(10, 10);//задаем позицию текста
 		
-		arrow.setPosition(650, 340);
-		window.draw(arrow);
+		//arrow.setPosition(650, 340);
+		incentiveTarget.setPosition(1200, 340);
+		nonIncentiveTarget.setPosition(100, 340);
+		window.draw(incentiveTarget);
+		window.draw(nonIncentiveTarget);
 
 		timer.setPosition(100, 340);
 		window.draw(timer);
