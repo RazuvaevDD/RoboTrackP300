@@ -16,31 +16,26 @@ tcpSender tcpSender;
 
 void Core::main(std::thread* coreThread)
 {
-	//тут связываем LSLInput с dataHandler (сигнал sendData в слот dataProcessing)
-	//LSLInput.sendData.connect(boost::bind(&DataHandler::dataProcessing, &dataHandler));
-	int kk = 0;
 	while (runCore)
 	{
 		std::vector<std::vector<float>> vectorProb = dataHandler.dataProcessing(LSLInput.getData());
 		
-		if (!vectorProb.empty()) {//если проба готова
+		if (!vectorProb.empty()) 
+		{//если проба готова
 			tcpSender.sendDataByTCP(vectorProb);
 			dataHandler.out << "Итоговые вектора:" << std::endl;
-			for (std::vector<float> proba : vectorProb) {
-				for (float data : proba) {
+			for (std::vector<float> proba : vectorProb) 
+			{
+				dataHandler.out << "Вектор:" << std::endl;
+				for (float data : proba) 
+				{
 					dataHandler.out << data << ' ';
 				}
 				dataHandler.out << std::endl;
+				if(proba.size()!=200)
+					dataHandler.out <<"ОШИБКА:"<< proba.size() <<" элементов"<< std::endl;
 			}
-			
-			kk = 0;
 		}
-
-		if (kk == 500)
-			dataHandler.setStatusPicture(1);//типа начинаем показывать картинку №1
-		if (kk == 700)
-			dataHandler.setStatusPicture(0);//типа заканчиваем показывать картинку
-		kk++;
 	}
 }
 
@@ -52,5 +47,6 @@ void Core::stopCore()
 }
 
 void Core::askStatus(int stat) {
+	//dataHandler.out << "СТАТА = " << stat << "\n";
 	dataHandler.setStatusPicture(stat);
 }
