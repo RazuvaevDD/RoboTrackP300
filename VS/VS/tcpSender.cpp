@@ -40,6 +40,18 @@ int tcpSender::checkSocket()
 
 void tcpSender::sendDataByTCP(std::vector<std::vector<float>>Dataa)
 {
+
+	std::cout << "0 - " << Dataa[0].size() << std::endl;
+	std::cout << "2 - " << Dataa[1].size() << std::endl;
+	std::cout << "3 - " << Dataa[2].size() << std::endl;
+	std::cout << "4 - " << Dataa[3].size() << std::endl;
+	std::cout << "5 - " << Dataa[4].size() << std::endl;
+	std::cout << "6 - " << Dataa[5].size() << std::endl;
+	std::cout << "7 - " << Dataa[6].size() << std::endl;
+	std::cout << "8 - " << Dataa[7].size() << std::endl;
+	std::cout << "9 - " << Dataa[8].size() << std::endl;
+
+	//поступает сигнал от Дани, он обрабатывается в необходимый формат 
 		std::vector<char> dataVector;
 		for (int i = 0; i < Dataa.size(); i++)
 		{

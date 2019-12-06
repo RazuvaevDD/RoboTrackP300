@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <windows.h>
 
 class DataHandler
 {
@@ -12,17 +13,18 @@ public:
 	std::vector<std::vector<float>> dataProcessing(std::vector<float>);
 	void startCreateVectorProba();
 
-	int SIZE_PRESHOW = 250;
-	int SIZE_PROBA   = 800;
+	double SIZE_PRESHOW = 0.250;
+	double SIZE_PROBA   = 0.800;
+	int Hz = 250;
 
 	std::ofstream out;
 	void setStatusPicture(int status);
 private:
 	
-	std::chrono::steady_clock::time_point t1; //время начала работы модуля
 	std::vector< std::vector<float>> vectorProb;
 
 	int STATUS = 0;
+	//int ccccc, qq = 0;
 
 	bool CREATING_PROBA = false;
 };
