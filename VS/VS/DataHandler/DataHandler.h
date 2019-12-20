@@ -14,7 +14,7 @@ public:
 	void startCreateVectorProba();
 
 	double SIZE_PRESHOW = 0.250;
-	double SIZE_PROBA   = 0.800;
+	double SIZE_PROBA   = 2.000;
 	int Hz = 250;
 
 	std::ofstream out;

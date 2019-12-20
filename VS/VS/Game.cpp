@@ -30,8 +30,8 @@ void Game::main(std::thread* gameThread)
 
 	sf::Text incentiveTarget("", font, 100);
 	sf::Text nonIncentiveTarget("", font, 100);
-	incentiveTarget.setString(">>");
-	nonIncentiveTarget.setString("X");
+	incentiveTarget.setString(">>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n");
+	nonIncentiveTarget.setString("X    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \n");
 
 	//arrow.setFillColor(sf::Color::Green);
 
@@ -67,25 +67,25 @@ void Game::main(std::thread* gameThread)
 	 */
 
 	sf::Sprite duckSprite;
-	duckSprite.setTexture(duckTexture);
-	duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-	duckSprite.setPosition(50, 50);
-	duckSprite.setScale(5, 5);
+	////duckSprite.setTexture(duckTexture);
+	////duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
+	////duckSprite.setPosition(50, 50);
+	////duckSprite.setScale(5, 5);
 
-	bool step = 0;
-	bool isRun = false;
-	bool closedEyes = false;
-	bool looksAway = false;
+	////bool step = 0;
+	////bool isRun = false;
+	////bool closedEyes = false;
+	////bool looksAway = false;
 
-	int groundCoord = 260;
+	////int groundCoord = 260;
 
-	double offset = 0.2;
-	double currentIsRunFrame = 5;
-	double currentClosedEyesFrame = 0;
-	double currentLooksAwayFrame = 0;
+	////double offset = 0.2;
+	////double currentIsRunFrame = 5;
+	////double currentClosedEyesFrame = 0;
+	////double currentLooksAwayFrame = 0;
 
-	double score = 0;
-	std::string strScore;
+	////double score = 0;
+	////std::string strScore;
 
 	int targetTimer = 0;
 	unsigned short int stats;
@@ -95,41 +95,41 @@ void Game::main(std::thread* gameThread)
 	//инициализация игры
 	while (runGame)
 	{
-		 // Игровой цикл, который можно остановить
+		// Игровой цикл, который можно остановить
 
 		float time = gameClock.getElapsedTime().asMicroseconds(); //дать прошедшее время в микросекундах
 		int timeTarget = targetClock.getElapsedTime().asMilliseconds();
 		gameClock.restart(); //перезагружает время
-		
+
 		//randomValue = dist(randomValueGenerator);
 
-		if (timeTarget >= 0 && timeTarget< 250)
+		if (timeTarget >= 0 && timeTarget < 250)
 		{
 			//arrow.setString("");
 			incentiveTarget.setFillColor(sf::Color::Black);
 			nonIncentiveTarget.setFillColor(sf::Color::Black);
 			stats = 0;
 			Core::askStatus(stats);
-		} 
+		}
 		else if (timeTarget >= 250 && timeTarget < 400)
 		{
 			if (randomValue == 1)
 			{
 				// целевой
-				incentiveTarget.setFillColor(sf::Color::Green);
+				incentiveTarget.setFillColor(sf::Color::Red);
 				nonIncentiveTarget.setFillColor(sf::Color::Black);
 				stats = 1;
 			}
 			else if (randomValue == 2 || randomValue == 3 || randomValue == 4 || randomValue == 5)//if (greenRedTargetStat == false)
 			{
 				// не целевой
-				nonIncentiveTarget.setFillColor(sf::Color::Red);
+				nonIncentiveTarget.setFillColor(sf::Color(41,41,41));
 				incentiveTarget.setFillColor(sf::Color::Black);
 				stats = 2;
 			}
 			Core::askStatus(stats);
 		}
-		else if (timeTarget >= 400 && timeTarget < 1400)
+		else if (timeTarget >= 400 && timeTarget < 2500)
 		{
 			incentiveTarget.setFillColor(sf::Color::Black);
 			nonIncentiveTarget.setFillColor(sf::Color::Black);
@@ -163,14 +163,14 @@ void Game::main(std::thread* gameThread)
 		}
 
 		// вызов функции моргания по кнопке (должен быть рандом)
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) closedEyes = true;
+		////if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) closedEyes = true;
 		// вызов функции пристального взгляда (должен быть рандом)
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) looksAway = true;
+		////if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) looksAway = true;
 
 		// реакция на P300
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) isRun = true;
+		////if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) isRun = true;
 
-
+/*
 		if (closedEyes)
 		{
 			currentClosedEyesFrame += 0.01 * (time / 1000);
@@ -223,24 +223,28 @@ void Game::main(std::thread* gameThread)
 			}
 
 		}
+*/
+////window.clear(sf::Color(190, 208, 202));
+		window.clear(sf::Color(0, 0, 0));
 
-		window.clear(sf::Color(190, 208, 202));
-
-
+		/*
 		for (int i = 0; i < 6; i++)
-		{
-			groundSprite.setPosition(groundCoord * i, 270);
-			window.draw(groundSprite);
-		}
+			{
+				groundSprite.setPosition(groundCoord * i, 270);
+				window.draw(groundSprite);
+			}
 
-		strScore = std::to_string((int)score);
+			strScore = std::to_string((int)score);
+	*/
+	////text.setString("SCORE: " + strScore);//задает строку тексту
+			////text.setPosition(10, 10);//задаем позицию текста
 
-		text.setString("SCORE: " + strScore);//задает строку тексту
-		text.setPosition(10, 10);//задаем позицию текста
-		
-		//arrow.setPosition(650, 340);
-		incentiveTarget.setPosition(1200, 340);
-		nonIncentiveTarget.setPosition(100, 340);
+			//arrow.setPosition(650, 340);
+			////incentiveTarget.setPosition(1200, 340);
+
+		;incentiveTarget.setPosition(80, 10);
+		/////nonIncentiveTarget.setPosition(100, 340);
+		nonIncentiveTarget.setPosition(10, 10);
 		window.draw(incentiveTarget);
 		window.draw(nonIncentiveTarget);
 
