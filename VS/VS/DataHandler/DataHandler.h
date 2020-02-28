@@ -13,8 +13,8 @@ public:
 	std::vector<std::vector<float>> dataProcessing(std::vector<float>);
 	void startCreateVectorProba();
 
-	double SIZE_PRESHOW = 0.250;
-	double SIZE_PROBA   = 0.800;
+	double SIZE_PRESHOW = 0.3;//sec
+	double SIZE_PROBA   = 1.5;
 	int Hz = 250;
 
 	std::ofstream out;

@@ -32,8 +32,8 @@ void Core::main(std::thread* coreThread)
 					dataHandler.out << data << ' ';
 				}
 				dataHandler.out << std::endl;
-				if(proba.size()!=200)
-					dataHandler.out <<"ÎØÈÁÊÀ:"<< proba.size() <<" ıëåìåíòîâ"<< std::endl;
+				/*if(proba.size()!=200)
+					dataHandler.out <<"ÎØÈÁÊÀ:"<< proba.size() <<" ıëåìåíòîâ"<< std::endl;*/
 			}
 		}
 	}

@@ -35,7 +35,7 @@ def filterSignal(sig):
 
 def getData():
     data = sock.recv(1000000)
-    print('got data: ', data)
+    #print('got data: ', data)
     str_data = data.decode("utf-8")[:-1]
     A=list(map(str, str_data.split(';')))
     result_data = []
@@ -45,17 +45,17 @@ def getData():
         result_data.append(B)
     df = pd.DataFrame(result_data)
     df = df.transpose()
-    print(len(df))
+    #print(len(df))
     df.columns = ["Marker", "Detector 1", "Detector 2", "Detector 3", "Detector 4", "Detector 5", "Detector 6", "Detector 7", "Detector 8"]
     df['Time'] = range(len(df))
-    df['Detector 1'] = filterSignal(df['Detector 1'])
-    df['Detector 2'] = filterSignal(df['Detector 2'])
-    df['Detector 3'] = filterSignal(df['Detector 3'])
-    df['Detector 4'] = filterSignal(df['Detector 4'])
-    df['Detector 5'] = filterSignal(df['Detector 5'])
-    df['Detector 6'] = filterSignal(df['Detector 6'])
-    df['Detector 7'] = filterSignal(df['Detector 7'])
-    df['Detector 8'] = filterSignal(df['Detector 8'])
+    #df['Detector 1'] = filterSignal(df['Detector 1'])
+    #df['Detector 2'] = filterSignal(df['Detector 2'])
+    #df['Detector 3'] = filterSignal(df['Detector 3'])
+    #df['Detector 4'] = filterSignal(df['Detector 4'])
+    #df['Detector 5'] = filterSignal(df['Detector 5'])
+    #df['Detector 6'] = filterSignal(df['Detector 6'])
+    #df['Detector 7'] = filterSignal(df['Detector 7'])
+    #df['Detector 8'] = filterSignal(df['Detector 8'])
     return df
 
 
@@ -68,43 +68,43 @@ def getEpoch(df):
 
 
 def showGraph():
-    dat1=[-1000,1000]
+    dat1=[-10,10]
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(111)
     Ln1, = ax1.plot(dat1)
     ax1.set_xlim([0,200])
 
-    dat2=[-1000,1000]
+    dat2=[-10,10]
     ax2 = fig1.add_subplot(111)
     Ln2, = ax2.plot(dat2)
     ax2.set_xlim([0,200])
     
-    dat3=[-1000,1000]
+    dat3=[-10,10]
     ax3 = fig1.add_subplot(111)
     Ln3, = ax3.plot(dat3)
     ax3.set_xlim([0,200])
     
-    dat4=[-1000,1000]
+    dat4=[-10,10]
     ax4 = fig1.add_subplot(111)
     Ln4, = ax4.plot(dat4)
     ax4.set_xlim([0,200])
     
-    dat5=[-1000,1000]
+    dat5=[-10,10]
     ax5 = fig1.add_subplot(111)
     Ln5, = ax5.plot(dat5)
     ax5.set_xlim([0,200])
     
-    dat6=[-1000,1000]
+    dat6=[-10,10]
     ax6 = fig1.add_subplot(111)
     Ln6, = ax6.plot(dat6)
     ax6.set_xlim([0,200])
     
-    dat7=[-1000,1000]
+    dat7=[-10,10]
     ax7 = fig1.add_subplot(111)
     Ln7, = ax7.plot(dat7)
     ax7.set_xlim([0,200])
     
-    dat8=[-1000,1000]
+    dat8=[-10,10]
     ax8 = fig1.add_subplot(111)
     Ln8, = ax8.plot(dat8)
     ax8.set_xlim([0,200])
@@ -119,16 +119,44 @@ def showGraph():
     while(True):
         i+=1
         df1 = getData()
-        df2 = getData()
-        df3 = getData()
-        df4 = getData()
-        df5 = getData()
+        #df2 = getData()
+        #df3 = getData()
+        #df4 = getData()
+        #df5 = getData()
+        #while (df1['Marker'][100] != 1):
+            #df1 = getData()
+        '''print('df1')
+        while (df2['Marker'][100] != 1):
+            df2 = getData()
+        print('df2')
+        while (df3['Marker'][100] != 1):
+            df3 = getData()
+        print('df3')
+        while (df4['Marker'][100] != 1):
+            df4 = getData()
+        print('df4')
+        while (df5['Marker'][100] != 1):
+            df5 = getData()
+        print('df5')
+              
+        print(df1['Marker'][100])
+        print(df2['Marker'][100])
+        print(df3['Marker'][100])
+        print(df4['Marker'][100])
+        print(df5['Marker'][100])'''
         marker = df1['Marker'][100]
-        df = (df1 + df2 + df3 + df4 + df5) / 5
+        df = df1 #df = (df1 + df2 + df3 + df4 + df5) / 5
         df['Marker'] = marker
         df.dropna(inplace=True)
         df = getEpoch(df)
         df_full = pd.concat([df_full, pd.DataFrame(df['Detector 1']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 2']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 3']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 4']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 5']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 6']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 7']).transpose()], ignore_index = True)
+        df_full = pd.concat([df_full, pd.DataFrame(df['Detector 8']).transpose()], ignore_index = True)
         df_full['Marker'][i-1] = marker
         #print(len(df['Detector 1']), len(df_full[0]))
         dat1 = df["Detector 1"]
@@ -157,7 +185,7 @@ def showGraph():
         Ln8.set_xdata(df["Time"])
 
         plt.pause(0.1)
-        if (i == 5):
+        if (i == 100):
             #print(df_full)
             df_full.to_csv('data.csv', index = False)
             df_full.to_excel('data.xlsx', index = False)
