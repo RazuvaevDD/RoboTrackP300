@@ -7,18 +7,61 @@
 #include <iostream>
 #include <string>
 #include "Core.h"
+/////////////////////////////////////////////////////////////////////////
+unsigned short int mode = 1;
+unsigned short int targetArrow = 3;
+unsigned short int width = 680;
+unsigned short int height = 680;
 
+std::string dotTexture = "res/mode_3/dot.png";
+std::string arrowTexture = "res/mode_3/arrow.png";
+
+unsigned short int point_0 = 0;
+unsigned short int point_1 = 300;
+unsigned short int point_2 = 400;
+unsigned short int point_3 = 1500;
+unsigned short int point_generated = 300;
+unsigned short int stats = 0;
+/////////////////////////////////////////////////////////////////////////
 using namespace Game;
 
 bool runGame = true;
 
+void chooseMode(int mode)
+{
+	switch (mode) {
+	case 1:
+		width = 400;
+		height = 400;
+		arrowTexture = "res/mode_1/arrow.png";
+		dotTexture = "res/mode_1/dot.png";
+		break;
+	case 2:
+		width = 400;
+		height = 400;
+		arrowTexture = "res/mode_2/arrow.png";
+		dotTexture = "res/mode_2/dot.png";
+		break;
+	case 3:
+		
+		break;
+	default:
+		break;
+	}
+}
+
 void Game::main(std::thread* gameThread)
 {
 	std::mt19937 randomValueGenerator(time(0));
-	std::uniform_int_distribution<int> dist(1, 5);
+	std::uniform_int_distribution<int> dist(1, 4);
+
+	std::mt19937 randomValueGeneratorForLastPoint(time(0));
+	std::uniform_int_distribution<int> dist_2(300, 600);
+
+	chooseMode(mode);
 
 	sf::sleep(sf::milliseconds(2000));
-	sf::RenderWindow window(sf::VideoMode(1440, 480), "Running Duck");
+	sf::RenderWindow window(sf::VideoMode(width, height), "Running Duck");
 	sf::CircleShape shape(100.f);
 	sf::Clock gameClock;
 	sf::Clock targetClock;
@@ -28,69 +71,34 @@ void Game::main(std::thread* gameThread)
 	sf::Text text(" ", font, 20);
 	text.setFillColor(sf::Color::Black);
 
-	sf::Text incentiveTarget("", font, 100);
-	sf::Text nonIncentiveTarget("", font, 100);
-	incentiveTarget.setString(">>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n>>  >>  >>  >>  >>  >>  >>  >>  >> \n");
-	nonIncentiveTarget.setString("X    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \nX    X    X    X    X    X    X    X    X \n");
+	sf::Text uparrow("", font, 100);
 
 	//arrow.setFillColor(sf::Color::Green);
 
 	sf::Text timer("", font, 100);
 	timer.setFillColor(sf::Color::White);
 
-	sf::Texture duckTexture;
-	if (!duckTexture.loadFromFile("res/DuckTile.png"))
+	sf::Texture dot;
+	if (!dot.loadFromFile(dotTexture))
 	{
 		// catch exception
 		std::cout << "ERROR! Texture missing!" << std::endl;
 	}
-
-	sf::Texture backgroundTexture;
-	if (!backgroundTexture.loadFromFile("res/backgroundTexture.png"))
+	sf::Texture arrow;
+	if (!arrow.loadFromFile(arrowTexture))
 	{
 		// catch exception
 		std::cout << "ERROR! Texture missing!" << std::endl;
 	}
-
-	sf::Sprite groundSprite;
-	groundSprite.setTexture(backgroundTexture);
-	groundSprite.setScale(5, 5);
-
-	/* coords:
-	 * 0) default - 0,0
-	 * 1) squinted - 44,0
-	 * 2) closed eyes - 88,0
-	 * 3) looks away 1 - 132,0
-	 * 4) looks away 2 - 176,0
-	 * 5) step 1 - 220,0
-	 * 6) step 2 - 264,0
-	 */
-
-	sf::Sprite duckSprite;
-	////duckSprite.setTexture(duckTexture);
-	////duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-	////duckSprite.setPosition(50, 50);
-	////duckSprite.setScale(5, 5);
-
-	////bool step = 0;
-	////bool isRun = false;
-	////bool closedEyes = false;
-	////bool looksAway = false;
-
-	////int groundCoord = 260;
-
-	////double offset = 0.2;
-	////double currentIsRunFrame = 5;
-	////double currentClosedEyesFrame = 0;
-	////double currentLooksAwayFrame = 0;
-
-	////double score = 0;
-	////std::string strScore;
+	
+	sf::Sprite dot_spr;
+	dot_spr.setTexture(dot);
+	sf::Sprite arrow_spr;
+	arrow_spr.setTexture(arrow);
 
 	int targetTimer = 0;
-	unsigned short int stats;
-	//bool greenRedTargetStatFlag = true;
 	int randomValue = 0;
+	int randomValueOfPointGenerated = 300;
 
 	//инициализация игры
 	while (runGame)
@@ -102,53 +110,67 @@ void Game::main(std::thread* gameThread)
 		gameClock.restart(); //перезагружает время
 
 		//randomValue = dist(randomValueGenerator);
+		//27 62 41 RGB
 
-		if (timeTarget >= 0 && timeTarget < 250)
+		//переменная для отрисовки сцен
+		int sceneNumber = 0;
+
+		if (timeTarget >= point_0 && timeTarget < point_1)
 		{
-			//arrow.setString("");
-			incentiveTarget.setFillColor(sf::Color::Black);
-			nonIncentiveTarget.setFillColor(sf::Color::Black);
+			sceneNumber = 0;
 			stats = 0;
 			Core::askStatus(stats);
 		}
-		else if (timeTarget >= 250 && timeTarget < 400)
+		else if (timeTarget >= point_1 && timeTarget < point_2)
 		{
 			if (randomValue == 1)
 			{
-				// целевой
-				incentiveTarget.setFillColor(sf::Color::Red);
-				nonIncentiveTarget.setFillColor(sf::Color::Black);
+
+				sceneNumber = 1;
+				//incentiveTarget.setFillColor(sf::Color::Green);
+				//nonIncentiveTarget.setFillColor(sf::Color::Black);
 				stats = 1;
 			}
-			else if (randomValue == 2 || randomValue == 3 || randomValue == 4 || randomValue == 5)//if (greenRedTargetStat == false)
+			else if (randomValue == 2)//if (greenRedTargetStat == false)
 			{
-				// не целевой
-				nonIncentiveTarget.setFillColor(sf::Color(41,41,41));
-				incentiveTarget.setFillColor(sf::Color::Black);
-				stats = 2;
+
+				sceneNumber = 2;
+				//nonIncentiveTarget.setFillColor(sf::Color::Red);
+				//incentiveTarget.setFillColor(sf::Color::Black);
+				stats = 2; 
+			}
+			else if (randomValue == 3)//if (greenRedTargetStat == false)
+			{
+				sceneNumber = 3;
+				//nonIncentiveTarget.setFillColor(sf::Color::Red);
+				//incentiveTarget.setFillColor(sf::Color::Black);
+				stats = 3;
+			}
+			else if (randomValue == 4)//if (greenRedTargetStat == false)
+			{
+				sceneNumber = 4;
+				//nonIncentiveTarget.setFillColor(sf::Color::Red);
+				//incentiveTarget.setFillColor(sf::Color::Black);
+				stats = 4;
 			}
 			Core::askStatus(stats);
 		}
-		else if (timeTarget >= 400 && timeTarget < 2500)
+		//МЕЖПРОБНЫЙ СДЕЛАТЬ РАНДОМНЫМ (сделано)
+		else if (timeTarget >= point_2 && timeTarget < point_3)
 		{
-			incentiveTarget.setFillColor(sf::Color::Black);
-			nonIncentiveTarget.setFillColor(sf::Color::Black);
+			stats = 0;
+			Core::askStatus(stats);
+		}
+		else if (timeTarget >= point_3 && timeTarget <= point_generated)
+		{
 			stats = 0;
 			Core::askStatus(stats);
 		}
 		else
-		{/*
-			if (greenRedTargetStat == true)
-			{
-				greenRedTargetStat = false;
-			}
-			else if (greenRedTargetStat == false)
-			{
-				greenRedTargetStat = true;
-			}*/
+		{
 			randomValue = dist(randomValueGenerator);
-			incentiveTarget.setFillColor(sf::Color::Black);
-			nonIncentiveTarget.setFillColor(sf::Color::Black);
+			randomValueOfPointGenerated = dist_2(randomValueGeneratorForLastPoint);
+			point_generated = point_3 + randomValueOfPointGenerated;
 			targetClock.restart();
 		}
 
@@ -162,98 +184,71 @@ void Game::main(std::thread* gameThread)
 				window.close();
 		}
 
-		// вызов функции моргания по кнопке (должен быть рандом)
-		////if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) closedEyes = true;
-		// вызов функции пристального взгляда (должен быть рандом)
-		////if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) looksAway = true;
-
-		// реакция на P300
-		////if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) isRun = true;
-
-/*
-		if (closedEyes)
-		{
-			currentClosedEyesFrame += 0.01 * (time / 1000);
-			if (currentClosedEyesFrame > 0 && currentClosedEyesFrame < 1) duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-			if (currentClosedEyesFrame > 1 && currentClosedEyesFrame < 2) duckSprite.setTextureRect(sf::IntRect(44, 0, 44, 44));
-			if (currentClosedEyesFrame > 2 && currentClosedEyesFrame < 3) duckSprite.setTextureRect(sf::IntRect(88, 0, 44, 44));
-			if (currentClosedEyesFrame > 3 && currentClosedEyesFrame < 4) duckSprite.setTextureRect(sf::IntRect(44, 0, 44, 44));
-			if (currentClosedEyesFrame > 4)
-			{
-				currentClosedEyesFrame -= 4;
-				duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-				closedEyes = false;
-			}
-
-		}
-
-		if (looksAway)
-		{
-			currentLooksAwayFrame += 0.005 * (time / 1000);
-			if (currentLooksAwayFrame > 0 && currentLooksAwayFrame < 1) duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-			if (currentLooksAwayFrame > 1 && currentLooksAwayFrame < 2) duckSprite.setTextureRect(sf::IntRect(132, 0, 44, 44));
-			if (currentLooksAwayFrame > 2 && currentLooksAwayFrame < 3) duckSprite.setTextureRect(sf::IntRect(176, 0, 44, 44));
-			if (currentLooksAwayFrame > 3 && currentLooksAwayFrame < 4) duckSprite.setTextureRect(sf::IntRect(132, 0, 44, 44));
-			if (currentLooksAwayFrame > 4)
-			{
-				currentLooksAwayFrame -= 4;
-				duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-				looksAway = false;
-			}
-		}
-
-		if (isRun)
-		{
-			//переписать!
-			//detect.setString("P300 DETECTED!");
-
-			score += time/1000;
-
-			currentIsRunFrame += 0.01 * time/1000;
-			if (currentIsRunFrame > 7) currentIsRunFrame -= 2;
-			duckSprite.setTextureRect(sf::IntRect(44 * int(currentIsRunFrame), 0, 44, 44));
-			duckSprite.move(offset * (time/1000), 0);
-
-			offset -= 0.0001;
-			if (offset < 0)
-			{
-				offset = 0.2;
-				isRun = false;
-				duckSprite.setTextureRect(sf::IntRect(0, 0, 44, 44));
-			}
-
-		}
-*/
-////window.clear(sf::Color(190, 208, 202));
 		window.clear(sf::Color(0, 0, 0));
 
-		/*
-		for (int i = 0; i < 6; i++)
-			{
-				groundSprite.setPosition(groundCoord * i, 270);
-				window.draw(groundSprite);
+			switch (sceneNumber) {
+			case 1:
+
+				//left
+				dot_spr.setPosition(173, 173);
+				window.draw(dot_spr);
+
+				arrow_spr.setColor(sf::Color(128, 128, 128));
+				if (mode == 1 && targetArrow != 1) {
+					arrow_spr.setColor(sf::Color(0, 0, 128));
+				}
+				
+				arrow_spr.setPosition(23, 173);
+				arrow_spr.setRotation(0.f);
+				window.draw(arrow_spr);
+				break;
+			case 2:
+				//right
+				dot_spr.setPosition(173, 173);
+				window.draw(dot_spr);
+
+				if (mode == 1 && targetArrow != 2) {
+					arrow_spr.setColor(sf::Color(0, 0, 128));
+				}
+
+				arrow_spr.setRotation(180.f);
+				arrow_spr.setPosition(377, 227);
+				window.draw(arrow_spr);
+				break;
+			case 3:
+				//up
+				dot_spr.setPosition(173, 173);
+				window.draw(dot_spr);
+
+				if (mode == 1 && targetArrow != 3) {
+					arrow_spr.setColor(sf::Color(0, 0, 128));
+				}
+
+				arrow_spr.setPosition(227, 23);
+				arrow_spr.setRotation(90.f);
+				window.draw(arrow_spr);
+				break;
+			case 4:
+				//down
+				dot_spr.setPosition(173, 173);
+				window.draw(dot_spr);
+
+				if (mode == 1 && targetArrow != 4) {
+					arrow_spr.setColor(sf::Color(0, 0, 128));
+				}
+
+				arrow_spr.setPosition(173, 377);
+				arrow_spr.setRotation(270.f);
+				window.draw(arrow_spr);
+				break;
+			default:
+				//noarr
+				arrow_spr.setColor(sf::Color(128, 128, 128));
+				dot_spr.setPosition(173, 173);
+				window.draw(dot_spr);
+				break;
 			}
 
-			strScore = std::to_string((int)score);
-	*/
-	////text.setString("SCORE: " + strScore);//задает строку тексту
-			////text.setPosition(10, 10);//задаем позицию текста
-
-			//arrow.setPosition(650, 340);
-			////incentiveTarget.setPosition(1200, 340);
-
-		;incentiveTarget.setPosition(80, 10);
-		/////nonIncentiveTarget.setPosition(100, 340);
-		nonIncentiveTarget.setPosition(10, 10);
-		window.draw(incentiveTarget);
-		window.draw(nonIncentiveTarget);
-
-		timer.setPosition(100, 340);
-		window.draw(timer);
-
-		window.draw(text);//рисую этот текст
-
-		window.draw(duckSprite);
 		window.display();
 	}
 	// Здесь удаление динамических объектов
