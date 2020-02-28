@@ -10,7 +10,6 @@ LSLConnector::LSLConnector():
 
 std::vector<float> LSLConnector::getData()
 {
-	//тут кидаешь сигнал с данными. —в€зывание в Core. ¬ыбери любую структуру какую будешь кидать, не об€зательно double*
 	inlet.pull_sample(sample);
 	return sample;
 }

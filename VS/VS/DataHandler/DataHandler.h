@@ -18,13 +18,14 @@ public:
 	int Hz = 250;
 
 	std::ofstream out;
+	std::ofstream dataOut, eventOut;
 	void setStatusPicture(int status);
 private:
 	
 	std::vector< std::vector<float>> vectorProb;
-
+	
 	int STATUS = 0;
-	//int ccccc, qq = 0;
+	int DataTick = 0;
 
 	bool CREATING_PROBA = false;
 };
