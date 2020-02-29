@@ -180,8 +180,10 @@ void Game::main(std::thread* gameThread)
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed)
+			if (event.type == sf::Event::Closed){
+				runGame = false;
 				window.close();
+			}
 		}
 
 		window.clear(sf::Color(0, 0, 0));
