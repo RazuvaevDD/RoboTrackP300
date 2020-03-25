@@ -7,6 +7,7 @@ namespace Game
 {
 	void main(std::thread*);
 	void stopGame();
+	void input();
 
 	//std::thread* GameThread;
 };
