@@ -77,15 +77,15 @@ void Game::input() {
 		}
 
 		if (isKeyPressedOneTime == false) {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+			/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window.close();
 				isKeyPressedOneTime = true;
 			}
-				
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+			*/	
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				//if (fullscreenMode) window.create(sf::VideoMode::getFullscreenModes()[0], windowName);
-				if (fullscreenMode) window.create(sf::VideoMode::getDesktopMode(), windowName);
-				if (!fullscreenMode) window.create(sf::VideoMode(WIDTH, HEIGHT), windowName);
+				if (fullscreenMode) window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::Fullscreen);
+				if (!fullscreenMode) window.create(sf::VideoMode(WIDTH, HEIGHT), windowName, sf::Style::Close);
 				fullscreenMode = !fullscreenMode;
 				isKeyPressedOneTime = true;
 			}
@@ -206,7 +206,11 @@ void Game::main(std::thread* gameThread)
 	sf::sleep(sf::milliseconds(2000)); //pause before starting
 
 	
-	window.create(sf::VideoMode(WIDTH, HEIGHT), "P-300");
+	window.create(sf::VideoMode(WIDTH, HEIGHT), windowName, sf::Style::Close);
+
+	//window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::Fullscreen);
+	//window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::None);
+
 
 	sf::Clock gameClock;
 	sf::Clock targetClock;
