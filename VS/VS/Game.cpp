@@ -1,4 +1,17 @@
-﻿#include "stdafx.h"
+﻿/*
+ * "Game module"
+ * 
+ * This module contain the base logic of window
+ * with target generation.
+ * 
+ * Module use SFML graphic library.
+ *
+ * Neizhko Vladimir,
+ * Saint-Petersburg,
+ * 2020.03
+ */
+
+#include "stdafx.h"
 #include "Game.h"
 
 #include <random>
@@ -10,11 +23,16 @@
 /////////////////////////////////////////////////////////////////////////
 unsigned short int mode = 1;
 unsigned short int targetArrow = 3;
-unsigned short int width = 680;
-unsigned short int height = 680;
+int WIDTH = 680; //1900
+int HEIGHT = 680; //1800
 
-std::string dotTexture = "res/mode_3/dot.png";
-std::string arrowTexture = "res/mode_3/arrow.png";
+int circleRadius = 30; // радиус окружности
+double arrowDistance = 2; // множитель, регулирует расстояние стрелок от круга
+int indent = 20;
+
+
+std::string arrowTexture = "res/textures/arrow.png";
+std::string windowName = "P-300";
 
 unsigned short int point_0 = 0;
 unsigned short int point_1 = 300;
@@ -22,32 +40,159 @@ unsigned short int point_2 = 400;
 unsigned short int point_3 = 1500;
 unsigned short int point_generated = 300;
 unsigned short int stats = 0;
+
+bool fullscreenMode = false;
+bool isKeyPressedOneTime = false;
+
+int arrowLargeSide = 130;
+int arrowSmallSide = 52;
+
+sf::Color colorArrow = sf::Color(0, 0, 0); //128, 128, 128
+sf::Color colorTagretArrow = sf::Color(0, 0, 128);
+sf::Color colorCircle = sf::Color(0, 0, 0); //255, 255, 255
+sf::Color colorRectangle = sf::Color(128, 128, 128); //0, 0, 0
+sf::Color colorBackground = sf::Color(0, 0, 0);
 /////////////////////////////////////////////////////////////////////////
 using namespace Game;
 
 bool runGame = true;
 
-void chooseMode(int mode)
-{
-	switch (mode) {
+sf::RenderWindow window;
+sf::CircleShape circle(circleRadius);
+sf::RectangleShape rectangle;
+sf::Sprite arrow_spr;
+
+void Game::input() {
+
+	/* In this void we give window management instructions:
+	 * we can set the size of frame by the key "F" on a keyboard
+	 * and we can close the window by the key "Escape".
+     */
+
+	sf::Event event;
+	while (window.pollEvent(event)) {
+		if (event.type == sf::Event::Closed) {
+			runGame = false;
+			window.close();
+		}
+
+		if (isKeyPressedOneTime == false) {
+			/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+				window.close();
+				isKeyPressedOneTime = true;
+			}
+			*/	
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+				//if (fullscreenMode) window.create(sf::VideoMode::getFullscreenModes()[0], windowName);
+				if (fullscreenMode) window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::Fullscreen);
+				if (!fullscreenMode) window.create(sf::VideoMode(WIDTH, HEIGHT), windowName, sf::Style::Close);
+				fullscreenMode = !fullscreenMode;
+				isKeyPressedOneTime = true;
+			}
+		} else if (event.type == sf::Event::KeyReleased) isKeyPressedOneTime = false;
+		
+	}
+}
+
+void DrawAllArrows(int rectanglePositionX, int rectanglePositionY,
+				   int circlePositionX, int circlePositionY,
+	               int upArrowPositionX, int upArrowPositionY,
+                   int downArrowPositionX, int downArrowPositionY,
+                   int leftArrowPositionX, int leftArrowPositionY,
+	               int rightArrowPositionX, int rightArrowPositionY) {
+	/* 
+	 * In this void we drawing all arrows, circle and rectangle
+	 * in static mode. Just for testing.
+	 */
+
+	sf::Texture arrow;
+	if (!arrow.loadFromFile(arrowTexture))
+	{
+		std::cout << "ERROR! Texture missing!" << std::endl;
+	}
+
+	rectangle.setPosition(rectanglePositionX, rectanglePositionY);
+	window.draw(rectangle);
+
+	arrow_spr.setTexture(arrow);
+	arrow_spr.setColor(colorArrow);
+
+	arrow_spr.setPosition(upArrowPositionX, upArrowPositionY);
+	arrow_spr.setRotation(90.f);
+	window.draw(arrow_spr);
+
+	arrow_spr.setPosition(downArrowPositionX, downArrowPositionY);
+	arrow_spr.setRotation(270.f);
+	window.draw(arrow_spr);
+
+	arrow_spr.setPosition(leftArrowPositionX, leftArrowPositionY);
+	arrow_spr.setRotation(0.f);
+	window.draw(arrow_spr);
+
+	arrow_spr.setPosition(rightArrowPositionX, rightArrowPositionY);
+	arrow_spr.setRotation(180.f);
+	window.draw(arrow_spr);
+
+	circle.setPosition(circlePositionX, circlePositionY);
+	window.draw(circle);
+}
+
+void DrawByAlgorythm(int sceneNumber, int rectanglePositionX, int rectanglePositionY,
+	int circlePositionX, int circlePositionY,
+	int upArrowPositionX, int upArrowPositionY,
+	int downArrowPositionX, int downArrowPositionY,
+	int leftArrowPositionX, int leftArrowPositionY,
+	int rightArrowPositionX, int rightArrowPositionY) {
+
+	/*
+	 * In this void we drawing all arrows, circle and rectangle
+	 * in dynamic mode by special algirythm.
+	 */
+
+	sf::Texture arrow;
+	if (!arrow.loadFromFile(arrowTexture))
+	{
+		std::cout << "ERROR! Texture missing!" << std::endl;
+	}
+	arrow_spr.setTexture(arrow);
+	arrow_spr.setColor(colorArrow);
+
+	rectangle.setPosition(rectanglePositionX, rectanglePositionY);
+	window.draw(rectangle);
+
+	circle.setPosition(circlePositionX, circlePositionY);
+	window.draw(circle);
+
+	switch (sceneNumber) {
 	case 1:
-		width = 400;
-		height = 400;
-		arrowTexture = "res/mode_1/arrow.png";
-		dotTexture = "res/mode_1/dot.png";
+		//left
+		arrow_spr.setPosition(leftArrowPositionX, leftArrowPositionY);
+		arrow_spr.setRotation(0.f);
+		window.draw(arrow_spr);
 		break;
 	case 2:
-		width = 400;
-		height = 400;
-		arrowTexture = "res/mode_2/arrow.png";
-		dotTexture = "res/mode_2/dot.png";
+		//right
+		arrow_spr.setPosition(rightArrowPositionX, rightArrowPositionY);
+		arrow_spr.setRotation(180.f);
+		window.draw(arrow_spr);
 		break;
 	case 3:
-		
+		//up
+		arrow_spr.setPosition(upArrowPositionX, upArrowPositionY);
+		arrow_spr.setRotation(90.f);
+		window.draw(arrow_spr);
+		break;
+	case 4:
+		//down
+		arrow_spr.setPosition(downArrowPositionX, downArrowPositionY);
+		arrow_spr.setRotation(270.f);
+		window.draw(arrow_spr);
 		break;
 	default:
+		//no arrows
 		break;
 	}
+
 }
 
 void Game::main(std::thread* gameThread)
@@ -58,52 +203,36 @@ void Game::main(std::thread* gameThread)
 	std::mt19937 randomValueGeneratorForLastPoint(time(0));
 	std::uniform_int_distribution<int> dist_2(300, 600);
 
-	chooseMode(mode);
+	sf::sleep(sf::milliseconds(2000)); //pause before starting
 
-	sf::sleep(sf::milliseconds(2000));
-	sf::RenderWindow window(sf::VideoMode(width, height), "Running Duck");
-	sf::CircleShape shape(100.f);
+	
+	window.create(sf::VideoMode(WIDTH, HEIGHT), windowName, sf::Style::Close);
+
+	//window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::Fullscreen);
+	//window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::None);
+
+
 	sf::Clock gameClock;
 	sf::Clock targetClock;
-	sf::Font font;
-	font.loadFromFile("res/arialbd.ttf");
 
-	sf::Text text(" ", font, 20);
-	text.setFillColor(sf::Color::Black);
-
-	sf::Text uparrow("", font, 100);
-
-	//arrow.setFillColor(sf::Color::Green);
-
-	sf::Text timer("", font, 100);
-	timer.setFillColor(sf::Color::White);
-
-	sf::Texture dot;
-	if (!dot.loadFromFile(dotTexture))
-	{
-		// catch exception
-		std::cout << "ERROR! Texture missing!" << std::endl;
-	}
 	sf::Texture arrow;
 	if (!arrow.loadFromFile(arrowTexture))
 	{
 		// catch exception
 		std::cout << "ERROR! Texture missing!" << std::endl;
 	}
-	
-	sf::Sprite dot_spr;
-	dot_spr.setTexture(dot);
-	sf::Sprite arrow_spr;
-	arrow_spr.setTexture(arrow);
 
 	int targetTimer = 0;
 	int randomValue = 0;
 	int randomValueOfPointGenerated = 300;
 
 	//инициализация игры
-	while (runGame)
+	//while (runGame)
+	while (window.isOpen())
 	{
 		// Игровой цикл, который можно остановить
+
+		input();
 
 		float time = gameClock.getElapsedTime().asMicroseconds(); //дать прошедшее время в микросекундах
 		int timeTarget = targetClock.getElapsedTime().asMilliseconds();
@@ -123,6 +252,7 @@ void Game::main(std::thread* gameThread)
 		}
 		else if (timeTarget >= point_1 && timeTarget < point_2)
 		{
+			/*
 			if (randomValue == 1)
 			{
 
@@ -153,6 +283,9 @@ void Game::main(std::thread* gameThread)
 				//incentiveTarget.setFillColor(sf::Color::Black);
 				stats = 4;
 			}
+			*/
+			sceneNumber = randomValue;
+			stats = sceneNumber;
 			Core::askStatus(stats);
 		}
 		//МЕЖПРОБНЫЙ СДЕЛАТЬ РАНДОМНЫМ (сделано)
@@ -177,86 +310,55 @@ void Game::main(std::thread* gameThread)
 		//time = time / 800; //скорость игры
 		//std::cout << "time = " << time << std::endl;
 
-		sf::Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed){
-				runGame = false;
-				window.close();
-			}
-		}
+		//fill screen with BLACK color
+		window.clear(colorBackground); 
+		// calculating coords of upper left corner
+		int rectanglePositionX = (window.getSize().x / 2) - ((arrowLargeSide * arrowDistance) + indent); 
+		int rectanglePositionY = (window.getSize().y / 2) - ((arrowLargeSide * arrowDistance) + indent);
 
-		window.clear(sf::Color(0, 0, 0));
+		int circlePositionX = (window.getSize().x / 2) - circleRadius;
+		int circlePositionY = (window.getSize().y / 2) - circleRadius;
 
-			switch (sceneNumber) {
-			case 1:
+		int upArrowPositionX = (window.getSize().x / 2) + (arrowSmallSide / 2);
+		int upArrowPositionY = (window.getSize().y / 2) - (arrowLargeSide * arrowDistance);
 
-				//left
-				dot_spr.setPosition(173, 173);
-				window.draw(dot_spr);
+		int downArrowPositionX = (window.getSize().x / 2) - (arrowSmallSide / 2);
+		int downArrowPositionY = (window.getSize().y / 2) + (arrowLargeSide * arrowDistance);
 
-				arrow_spr.setColor(sf::Color(128, 128, 128));
-				if (mode == 1 && targetArrow != 1) {
-					arrow_spr.setColor(sf::Color(0, 0, 128));
-				}
-				
-				arrow_spr.setPosition(23, 173);
-				arrow_spr.setRotation(0.f);
-				window.draw(arrow_spr);
-				break;
-			case 2:
-				//right
-				dot_spr.setPosition(173, 173);
-				window.draw(dot_spr);
+		int leftArrowPositionX = (window.getSize().x / 2) - (arrowLargeSide * arrowDistance);
+		int leftArrowPositionY = (window.getSize().y / 2) - (arrowSmallSide / 2);
 
-				if (mode == 1 && targetArrow != 2) {
-					arrow_spr.setColor(sf::Color(0, 0, 128));
-				}
+		int rightArrowPositionX = (window.getSize().x / 2) + (arrowLargeSide * arrowDistance);
+		int rightArrowPositionY = (window.getSize().y / 2) + (arrowSmallSide / 2);
+		
+		circle.setFillColor(colorCircle);
+		rectangle.setFillColor(colorRectangle);
+		// setting size of rectangle by subtraction of right buttom corner coords and upper left corner coords
+		rectangle.setSize(sf::Vector2f(((window.getSize().x / 2) + ((arrowLargeSide * arrowDistance) + indent) - rectanglePositionX),
+			                           ((window.getSize().y / 2) + ((arrowLargeSide * arrowDistance) + indent)) - rectanglePositionY));
 
-				arrow_spr.setRotation(180.f);
-				arrow_spr.setPosition(377, 227);
-				window.draw(arrow_spr);
-				break;
-			case 3:
-				//up
-				dot_spr.setPosition(173, 173);
-				window.draw(dot_spr);
-
-				if (mode == 1 && targetArrow != 3) {
-					arrow_spr.setColor(sf::Color(0, 0, 128));
-				}
-
-				arrow_spr.setPosition(227, 23);
-				arrow_spr.setRotation(90.f);
-				window.draw(arrow_spr);
-				break;
-			case 4:
-				//down
-				dot_spr.setPosition(173, 173);
-				window.draw(dot_spr);
-
-				if (mode == 1 && targetArrow != 4) {
-					arrow_spr.setColor(sf::Color(0, 0, 128));
-				}
-
-				arrow_spr.setPosition(173, 377);
-				arrow_spr.setRotation(270.f);
-				window.draw(arrow_spr);
-				break;
-			default:
-				//noarr
-				arrow_spr.setColor(sf::Color(128, 128, 128));
-				dot_spr.setPosition(173, 173);
-				window.draw(dot_spr);
-				break;
-			}
+		DrawByAlgorythm(sceneNumber, rectanglePositionX, rectanglePositionY,
+			circlePositionX, circlePositionY,
+			upArrowPositionX, upArrowPositionY,
+			downArrowPositionX, downArrowPositionY,
+			leftArrowPositionX, leftArrowPositionY,
+			rightArrowPositionX, rightArrowPositionY);
+    
+	/// TODO: make testmode and use this function in testmode
+	/*	DrawAllArrows(rectanglePositionX, rectanglePositionY,
+					  circlePositionX, circlePositionY, 
+			          upArrowPositionX, upArrowPositionY, 
+					  downArrowPositionX, downArrowPositionY, 
+					  leftArrowPositionX, leftArrowPositionY, 
+					  rightArrowPositionX, rightArrowPositionY);
+     */
 
 		window.display();
 	}
-	// Здесь удаление динамических объектов
 }
 
-void Game::stopGame() // Вызывается когда программа закрывается
+
+void Game::stopGame() // Calling when closing
 {
 	runGame = false;
 	//Тут действия для завершения работы игры
