@@ -21,14 +21,15 @@
 #include <string>
 #include "Core.h"
 /////////////////////////////////////////////////////////////////////////
-unsigned short int mode = 1;
+unsigned short int mode = 1; //1 or 2
 unsigned short int targetArrow = 3;
 int WIDTH = 680; //1900
 int HEIGHT = 680; //1800
 
-int circleRadius = 30; // радиус окружности
-double arrowDistance = 2; // множитель, регулирует расстояние стрелок от круга
-int indent = 20;
+int circleRadius = 30; // радиус окружности НУЖНО МЕНЯТЬ ГЛОБАЛЬНО!!!!
+double arrowDistance = 2; // множитель, регулирует расстояние стрелок от круга (2 по умолчанию, 0.5 что бы стрелки были в центре)
+double rectangleDistance = 2; // коэфициент размера квадрата, в mode = 1 должен быть равен arrowDistance, в mode 2 равен константе
+int indent = 20; // отступ от края для стрелки (20 по умолчанию)
 
 
 std::string arrowTexture = "res/textures/arrow.png";
@@ -42,7 +43,8 @@ unsigned short int point_generated = 300;
 unsigned short int stats = 0;
 
 bool fullscreenMode = false;
-bool isKeyPressedOneTime = false;
+bool isKeyESCPressedOneTime = false;
+bool isKeyMPressedOneTime = false;
 
 int arrowLargeSide = 130;
 int arrowSmallSide = 52;
@@ -62,11 +64,26 @@ sf::CircleShape circle(circleRadius);
 sf::RectangleShape rectangle;
 sf::Sprite arrow_spr;
 
+void checkMode() {
+	if (mode == 1) {
+		circleRadius = 30;
+		circle.setRadius(circleRadius); //потому что circle глобальный!
+		arrowDistance = 2;
+		rectangleDistance = arrowDistance;
+	}
+	else if (mode == 2) {
+		circleRadius = 0;
+		circle.setRadius(circleRadius); //потому что circle глобальный!
+		arrowDistance = 0.5;
+		rectangleDistance = 2;
+	}
+}
+
 void Game::input() {
 
 	/* In this void we give window management instructions:
-	 * we can set the size of frame by the key "F" on a keyboard
-	 * and we can close the window by the key "Escape".
+	 * we can set the size of frame by the key "Escape" on a keyboard
+	 * and we can switch mode by the key "M".
      */
 
 	sf::Event event;
@@ -76,21 +93,36 @@ void Game::input() {
 			window.close();
 		}
 
-		if (isKeyPressedOneTime == false) {
+		if (isKeyESCPressedOneTime == false) {
 			/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				window.close();
 				isKeyPressedOneTime = true;
 			}
-			*/	
+			*/
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 				//if (fullscreenMode) window.create(sf::VideoMode::getFullscreenModes()[0], windowName);
 				if (fullscreenMode) window.create(sf::VideoMode::getDesktopMode(), windowName, sf::Style::Fullscreen);
 				if (!fullscreenMode) window.create(sf::VideoMode(WIDTH, HEIGHT), windowName, sf::Style::Close);
 				fullscreenMode = !fullscreenMode;
-				isKeyPressedOneTime = true;
+				isKeyESCPressedOneTime = true;
 			}
-		} else if (event.type == sf::Event::KeyReleased) isKeyPressedOneTime = false;
+		} else if (event.type == sf::Event::KeyReleased) isKeyESCPressedOneTime = false;
 		
+		if (isKeyMPressedOneTime == false) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) {
+
+				if (mode == 1) {
+					mode = 2;
+				}
+				else if (mode == 2) {
+					mode = 1;
+				}
+				checkMode();
+				isKeyMPressedOneTime = true;
+			}
+		}
+		else if (event.type == sf::Event::KeyReleased) isKeyMPressedOneTime = false;
+
 	}
 }
 
@@ -197,6 +229,8 @@ void DrawByAlgorythm(int sceneNumber, int rectanglePositionX, int rectanglePosit
 
 void Game::main(std::thread* gameThread)
 {
+	checkMode();
+
 	std::mt19937 randomValueGenerator(time(0));
 	std::uniform_int_distribution<int> dist(1, 4);
 
@@ -313,8 +347,11 @@ void Game::main(std::thread* gameThread)
 		//fill screen with BLACK color
 		window.clear(colorBackground); 
 		// calculating coords of upper left corner
-		int rectanglePositionX = (window.getSize().x / 2) - ((arrowLargeSide * arrowDistance) + indent); 
-		int rectanglePositionY = (window.getSize().y / 2) - ((arrowLargeSide * arrowDistance) + indent);
+		//---------------------------------------------------------------------------------------------------------
+		//rectangleDistance заменяет коэфициент arrowDistance для того что бы квадрат не уползал вслед за стрелками ЗАМЕНИТЬ ВТОРЫМ РЕЖИМОМ!
+		//---------------------------------------------------------------------------------------------------------
+		int rectanglePositionX = (window.getSize().x / 2) - ((arrowLargeSide * rectangleDistance) + indent);
+		int rectanglePositionY = (window.getSize().y / 2) - ((arrowLargeSide * rectangleDistance) + indent);
 
 		int circlePositionX = (window.getSize().x / 2) - circleRadius;
 		int circlePositionY = (window.getSize().y / 2) - circleRadius;
@@ -334,8 +371,8 @@ void Game::main(std::thread* gameThread)
 		circle.setFillColor(colorCircle);
 		rectangle.setFillColor(colorRectangle);
 		// setting size of rectangle by subtraction of right buttom corner coords and upper left corner coords
-		rectangle.setSize(sf::Vector2f(((window.getSize().x / 2) + ((arrowLargeSide * arrowDistance) + indent) - rectanglePositionX),
-			                           ((window.getSize().y / 2) + ((arrowLargeSide * arrowDistance) + indent)) - rectanglePositionY));
+		rectangle.setSize(sf::Vector2f(((window.getSize().x / 2) + ((arrowLargeSide * rectangleDistance) + indent) - rectanglePositionX),
+			                           ((window.getSize().y / 2) + ((arrowLargeSide * rectangleDistance) + indent)) - rectanglePositionY));
 
 		DrawByAlgorythm(sceneNumber, rectanglePositionX, rectanglePositionY,
 			circlePositionX, circlePositionY,
